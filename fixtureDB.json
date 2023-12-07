@@ -1,0 +1,205 @@
+[
+    {
+        "model": "store.category",
+        "pk": 1,
+        "fields": {
+            "name": "Cap",
+            "created": "2021-01-24",
+            "updated": "2021-01-24"
+        }
+    },
+        {
+        "model": "store.category",
+        "pk": 2,
+        "fields": {
+            "name": "TShirt",
+            "created": "2021-01-24",
+            "updated": "2021-01-24"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 1,
+        "fields": {
+            "category": 1,
+            "main_colour": "BK",
+            "second_colour": "WH",
+            "logo_colour": "RD",
+            "brand": "Nike",
+            "inclusion_date": "2022-01-24",
+            "url_img": "https://www.regalopublicidad.com/images/6m7xq/dc9683234ef713891c5af3321445/610-460/gorra-de-rejilla-con-frontal-blanco-negra.jpg",
+            "price": 12.50,
+            "initial_stock": 10,
+            "current_stock": 8,
+            "description": "BK Cap Nike"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 2,
+        "fields": {
+            "category": 1,
+            "main_colour": "RD",
+            "second_colour": "WH",
+            "logo_colour": "BK",
+            "brand": "Adidas",
+            "inclusion_date": "2022-01-26",
+            "url_img": "https://monsterstamping.es/262-large_default/gorra-trucker-veWHe-militar.jpg",
+            "price": 11,
+            "initial_stock": 10,
+            "current_stock": 7,
+            "description": "RD Cap Adidas"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 3,
+        "fields": {
+            "category": 1,
+            "main_colour": "BL",
+            "second_colour": "WH",
+            "logo_colour": "BK",
+            "brand": "GAP",
+            "inclusion_date": "2022-01-22",
+            "url_img": "https://images.ssstatic.com/gorra-azul-blanco-27868656z0-12452267.jpg",
+            "price": 18,
+            "initial_stock": 10,
+            "current_stock": 9,
+            "description": "BL Cap GAP"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 4,
+        "fields": {
+            "category": 1,
+            "main_colour": "GR",
+            "second_colour": "WH",
+            "logo_colour": "WH",
+            "brand": "TR",
+            "inclusion_date": "2022-01-18",
+            "url_img": "https://www.sevenshoponline.com/uploads/photo/image/5353/gallery_A01970_2Q1rRLpl.JPG",
+            "price": 19.20,
+            "initial_stock": 10,
+            "current_stock": 8,
+            "description": "GR Cap TR"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 5,
+        "fields": {
+            "category": 1,
+            "main_colour": "WH",
+            "second_colour": "BK",
+            "logo_colour": "WH",
+            "brand": "GP",
+            "inclusion_date": "2022-01-14",
+            "url_img": "https://www.tfasports.com/image/cache/productos/Caps/Gorra-Trucker-Retro-Naranja-Negro-700x700.jpg",
+            "price": 14,
+            "initial_stock": 10,
+            "current_stock": 6,
+            "description": "White Cap Nike"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 6,
+        "fields": {
+            "category": 2,
+            "main_colour": "RD",
+            "second_colour": "BK",
+            "brand": "Nike",
+            "size": "M",
+            "sizing": "F",
+            "fabric": "CT",
+            "sleeve": true,
+            "inclusion_date": "2022-01-24",
+            "url_img": "https://www.gransport.es/13584-large_default/camiseta-supernova-negro-y-rojo.jpg",
+            "price": 22,
+            "initial_stock": 10,
+            "current_stock": 7,
+            "description": "RD T-shirt Nike"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 7,
+        "fields": {
+            "category": 2,
+            "main_colour": "BK",
+            "second_colour": "WH",
+            "brand": "Adidas",
+            "size": "XL",
+            "sizing": "M",
+            "fabric": "POL",
+            "sleeve": false,
+            "inclusion_date": "2022-01-25",
+            "url_img": "https://www.mprosports.com/large/CAMISETA-JAKO-INTER-MANGA-LARGA%2C-NEGRA-BLANCA-PLATA-HOMBRE.-i32581.jpg",
+            "price": 28,
+            "initial_stock": 10,
+            "current_stock": 8,
+            "description": "BK & WH T-shirt Adidas"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 8,
+        "fields": {
+            "category": 2,
+            "main_colour": "BL",
+            "second_colour": "BK",
+            "brand": "WET",
+            "size": "L",
+            "sizing": "F",
+            "fabric": "CT",
+            "sleeve": true,
+            "inclusion_date": "2022-01-28",
+            "url_img": "https://rgbikes.com/wp-content/uploads/2019/08/camiseta-deportiva-calle-chico-adidas-club-c-b-azul-negra-du0872-rg-bikes-silleda.jpg",
+            "price": 27,
+            "initial_stock": 10,
+            "current_stock": 8,
+            "description": "BL T-shirt WET"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 9,
+        "fields": {
+            "category": 2,
+            "main_colour": "YW",
+            "second_colour": "WH",
+            "brand": "FD",
+            "size": "S",
+            "sizing": "M",
+            "fabric": "LY",
+            "sleeve": false,
+            "inclusion_date": "2022-01-18",
+            "url_img": "https://www.jbruna.com/1674-large_default/camiseta-racing-colores.jpg",
+            "price": 18,
+            "initial_stock": 10,
+            "current_stock": 8,
+            "description": "YW T-shirt FD"
+        }
+    },
+    {
+        "model": "store.product",
+        "pk": 10,
+        "fields": {
+            "category": 2,
+            "main_colour": "WH",
+            "second_colour": "RD",
+            "brand": "AAC",
+            "size": "L",
+            "sizing": "M",
+            "fabric": "CT",
+            "sleeve": true,
+            "inclusion_date": "2022-01-22",
+            "url_img": "https://gasoilonline.com/435-large_default/camiseta-baseball-blanca-mangas-rojas.jpg",
+            "price": 25,
+            "initial_stock": 10,
+            "current_stock": 9,
+            "description": "WH T-shirt AAC"
+        }
+    }
+]
