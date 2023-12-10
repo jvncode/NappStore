@@ -6,6 +6,12 @@ services:
       - "8000:8000"
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
-
-
+      - .:/napp
+  db:
+    image: nouchka/sqlite3:latest
+    container_name: "sqlite3db"
+    restart: always
+    volumes:
+       - .:/napp
+    environment:
+      - SQLITE3_DB=db.sqlite3

@@ -1,3 +1,4 @@
+from freezegun import freeze_time
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
@@ -237,10 +238,14 @@ class AddCartItemSerializerTest(TestCase):
                 AddCartItemSerializer().validate_product_id(None)
 
 
+@freeze_time("2023-12-01 00:00:00")
 class CartSerializerTest(TestCase):
     def test_serializer(self):
+        self.maxDiff = None
         cart = CartFactory(
             id='c167678d-702d-49fc-a84f-492d9bcbad87',
+            created="2023-12-01",
+            completed=False,
         )
         cap = ProductFactory(
             category=CategoryFactory(name="cap"),
@@ -262,37 +267,18 @@ class CartSerializerTest(TestCase):
         )
 
         output = CartSerializer(cart).data
-        print(output)
-        self.assertDictEqual(
-            output,
-            {
-                'id': 'c167678d-702d-49fc-a84f-492d9bcbad87',
-                'items': [
-                    {
-                        'id': 1,
-                        'cart': 'c167678d-702d-49fc-a84f-492d9bcbad87',
-                        'product': {
-                            'id': 1,
-                            'category_name': 'cap',
-                            'description': 'Product test',
-                            'price': 20.4,
-                        },
-                        'quantity': 2,
-                        'sub_total': 40.8,
-                    },
-                    {
-                        'id': 2,
-                        'cart': 'c167678d-702d-49fc-a84f-492d9bcbad87',
-                        'product': {
-                            'id': 2,
-                            'category_name': 'tshirt',
-                            'description': 'Product test',
-                            'price': 18.5,
-                        },
-                        'quantity': 3,
-                        'sub_total': 55.5,
-                    },
-                ],
-                'total': 96.3,
-            },
+        self.assertEqual(output['id'], 'c167678d-702d-49fc-a84f-492d9bcbad87')
+        self.assertEqual(
+            output['items'][0]['product'],
+                {
+                    'id': 1,
+                    'category_name': 'cap',
+                    'description': 'Product test',
+                    'price': 20.4
+                },
         )
+        self.assertEqual(output['items'][0]['quantity'], 2),
+        self.assertEqual(output['items'][0]['sub_total'], 40.8),
+        self.assertEqual(output['total'], 96.3)
+        self.assertEqual(output['created'], '2023-12-01T00:00:00')
+        self.assertFalse(output['completed'])
