@@ -1,3 +1,10 @@
+CAPS = "caps"
+TSHIRTS = "tshirts"
+CATEGORIES_CHOICES = (
+    (CAPS, "Caps"),
+    (TSHIRTS, "T-Shirts")
+)
+
 WHITE = "white"
 BLACK = "black"
 BLUE = "blue"

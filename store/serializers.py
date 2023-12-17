@@ -10,71 +10,61 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CapSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = [
-            "category",
-            "main_colour",
-            "second_colour",
-            "logo_colour",
-            "brand",
-            "inclusion_date",
-            "url_img",
-            "price",
-            "initial_stock",
-            "current_stock",
-            "description",
-        ]
-
-
-class TShirtSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = [
-            "category",
-            "main_colour",
-            "second_colour",
-            "brand",
-            "inclusion_date",
-            "url_img",
-            "price",
-            "initial_stock",
-            "current_stock",
-            "description",
-            "size",
-            "sizing",
-            "fabric",
-            "sleeve",
-        ]
-
-
 class ProductSerializer(serializers.ModelSerializer):
-    category_name = serializers.StringRelatedField(source="category.name")
-
+    category_name = serializers.StringRelatedField(source="category.category")
+    product_available = serializers.SerializerMethodField(method_name="is_available")
     class Meta:
         model = Product
-        exclude = ['initial_stock']
+        exclude = ['initial_stock', 'created', 'updated']
 
-    def get_caps(self, obj):
-        if obj.category.name == "cap":
-            return CapSerializer(obj)
+    def is_available(self, cart_item: CartItems):
+        return cart_item.product.is_available
 
-    def get_tshirts(self, obj):
-        if obj.category.name == "tshirt":
-            return TShirtSerializer(obj)
+class CapSerializer(ProductSerializer):
+    class Meta(ProductSerializer.Meta):
+        exclude = [
+            'initial_stock',
+            'size',
+            'sizing',
+            'fabric',
+            'sleeve',
+        ]
 
 
-class SimpleProductSerializer(serializers.ModelSerializer):
-    category_name = serializers.StringRelatedField(source="category.name")
-    class Meta:
-        model = Product
-        fields = ["id", "category_name", "description", "price"]
+class TShirtSerializer(ProductSerializer):
+    class Meta(ProductSerializer.Meta):
+        exclude = [
+            'logo_colour',
+            'initial_stock',
+
+        ]
+
+
+class SimpleProductSerializer(ProductSerializer):
+    category_name = serializers.StringRelatedField(source="category.category")
+
+    class Meta(ProductSerializer.Meta):
+        exclude = [
+            'category',
+            'main_colour',
+            'second_colour',
+            'logo_colour',
+            'brand',
+            'inclusion_date',
+            'url_img',
+            'initial_stock',
+            'current_stock',
+            'size',
+            'sizing',
+            'fabric',
+            'sleeve',
+        ]
 
 
 class CartItemsSerializer(serializers.ModelSerializer):
     product = SimpleProductSerializer(many=False)
     sub_total = serializers.SerializerMethodField(method_name="total")
+
 
     class Meta:
         model = CartItems
@@ -84,7 +74,7 @@ class CartItemsSerializer(serializers.ModelSerializer):
         return cart_item.quantity * cart_item.product.price
 
 
-class AddCartItemSerializer(serializers.ModelSerializer):
+class AddCartItemSerializer(CartItemsSerializer):
     product_id = serializers.UUIDField()
 
     def validate_product_id(self, value):
@@ -122,8 +112,7 @@ class AddCartItemSerializer(serializers.ModelSerializer):
 
         return self.instance
 
-    class Meta:
-        model = CartItems
+    class Meta(CartItemsSerializer.Meta):
         fields = ["id", "product_id", "quantity"]
 
 
@@ -140,6 +129,7 @@ class CartSerializer(serializers.ModelSerializer):
         items = cart.items.all()
         total = sum([item.quantity * item.product.price for item in items])
         return total
+
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:

@@ -3,11 +3,11 @@ import factory
 from factory.django import DjangoModelFactory
 
 from ..models import Category, Product, Cart, CartItems, Customer
-from ..constants import COLOURS, SIZE, SIZING, FABRIC
+from ..constants import COLOURS, SIZE, SIZING, FABRIC, CAPS
 
 
 class CategoryFactory(DjangoModelFactory):
-    name = "Name test"
+    category = CAPS
     created = datetime.datetime(
         day=18,
         month=5,
@@ -33,8 +33,8 @@ class ProductFactory(DjangoModelFactory):
     inclusion_date = datetime.datetime.now()
     url_img = "www.img_test.com"
     price = 0
-    initial_stock = 0
-    current_stock = 0
+    initial_stock = 8
+    current_stock = 8
     description = "Product test"
 
     class Meta:

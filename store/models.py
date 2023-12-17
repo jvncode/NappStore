@@ -1,11 +1,12 @@
 import uuid
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
-from .constants import COLOURS, SIZE, SIZING, FABRIC
+from .constants import COLOURS, SIZE, SIZING, FABRIC, CATEGORIES_CHOICES
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, blank=True, null=True)
+    category = models.CharField(max_length=50, choices=CATEGORIES_CHOICES, blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -14,11 +15,10 @@ class Category(models.Model):
         verbose_name_plural = "categories"
 
     def __str__(self):
-        return self.name
+        return self.category
 
 
-class Product(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+class Product(Category):
     main_colour = models.CharField(max_length=50, choices=COLOURS, null=False, blank=False, verbose_name='Main colour')
     second_colour = models.CharField(max_length=50, choices=COLOURS, null=False, blank=False,
                                      verbose_name='Secondary colour')
@@ -42,7 +42,7 @@ class Product(models.Model):
         verbose_name_plural = "products"
 
     def __str__(self):
-        return f"{self.category} - {self.brand}"
+        return f"{self.category} | {self.description} | {self.brand}"
 
     @property
     def is_available(self):
@@ -59,18 +59,11 @@ class Cart(models.Model):
 
     # We overwrite this method to check that there is no active cart
     # in order to create another one.
-    # TODO Discriminate when POST or PUT to be able to update the cart
-    """
     def save(self, *args, **kwargs):
         current_cart = Cart.objects.all().first()
-        if not current_cart:
+        if not current_cart or current_cart.completed:
             return super(Cart, self).save(*args, **kwargs)
-        else:
-            if current_cart.completed:
-                return super(Cart, self).save(*args, **kwargs)
-            else:
-                raise ValidationError("One cart still in progress")
-    """
+        raise ValidationError("One cart still in progress")
 
 
 class CartItems(models.Model):
@@ -80,6 +73,13 @@ class CartItems(models.Model):
 
     def __str__(self):
         return self.product.description
+
+    def save(self, *args, **kwargs):
+        current_product = Product.objects.filter(id=self.product.id).first()
+        if current_product.is_available:
+            return super(CartItems, self).save(*args, **kwargs)
+        else:
+            raise ValidationError("Product not available")
 
 
 class Customer(models.Model):

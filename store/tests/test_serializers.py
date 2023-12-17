@@ -2,6 +2,7 @@ from freezegun import freeze_time
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
+from ..constants import CAPS, TSHIRTS
 from ..serializers import CategorySerializer, ProductSerializer, CartSerializer, TShirtSerializer, CartItemsSerializer, \
     CapSerializer, SimpleProductSerializer, AddCartItemSerializer
 from .factories import CategoryFactory, ProductFactory, CartFactory, CartItemsFactory
@@ -16,7 +17,7 @@ class CategorySerializerTest(TestCase):
             output,
             {
                 'id': output['id'],
-                'name': 'Name test',
+                'category': 'caps',
                 'created': output['created'],
                 'updated': output['updated'],
             }
@@ -25,13 +26,15 @@ class CategorySerializerTest(TestCase):
 
 class CapSerializerTest(TestCase):
     def test_serializer(self):
-        cap = ProductFactory(category=CategoryFactory(name="cap"))
+        cap = ProductFactory(category=CategoryFactory(category=CAPS))
 
         output = CapSerializer(cap).data
         self.assertDictEqual(
             output,
             {
-                'category': 1,
+                'id': 2,
+                'category': "caps",
+                'category_name': 'caps',
                 'main_colour': 'white',
                 'second_colour': 'black',
                 'logo_colour': 'green',
@@ -39,59 +42,59 @@ class CapSerializerTest(TestCase):
                 'inclusion_date': output["inclusion_date"],
                 'url_img': 'www.img_test.com',
                 'price': 0.0,
-                'initial_stock': 0,
-                'current_stock': 0,
-                'description': 'Product test'
+                'product_available': True,
+                'current_stock': 8,
+                'description': 'Product test',
+                'created': output['created'],
+                'updated': output['updated'],
             }
         )
 
 
 class TShirtSerializerTest(TestCase):
     def test_serializer(self):
-        tshirt = ProductFactory(category=CategoryFactory(name="tshirt"))
+        tshirt = ProductFactory(category=CategoryFactory(category=TSHIRTS))
 
         output = TShirtSerializer(tshirt).data
         self.assertDictEqual(
             output,
             {
-                'category': 1,
+                'id': 2,
+                'category': 'tshirts',
+                'category_name': 'tshirts',
                 'main_colour': 'white',
                 'second_colour': 'black',
                 'brand': 'Brand test',
                 'inclusion_date': output["inclusion_date"],
                 'url_img': 'www.img_test.com',
                 'price': 0.0,
-                'initial_stock': 0,
-                'current_stock': 0,
+                'product_available': True,
+                'current_stock': 8,
                 'description': 'Product test',
                 'size': 'small',
                 'sizing': 'male',
                 'fabric': 'cottom',
-                'sleeve': True
+                'sleeve': True,
+                'created': output['created'],
+                'updated': output['updated'],
             }
         )
 
 
 class ProductSerializerTest(TestCase):
     def setUp(self):
-        self.product = ProductFactory(
-            category=CategoryFactory()
-        )
         self.cap = ProductFactory(
-            category=CategoryFactory(name="cap")
-        )
-        self.tshirt = ProductFactory(
-            category=CategoryFactory(name="tshirt")
+            category=CategoryFactory(category=CAPS)
         )
 
     def test_serializer(self):
-        output = ProductSerializer(self.product).data
+        output = ProductSerializer(self.cap).data
         self.assertDictEqual(
             output,
             {
-                'id': output["id"],
-                'category': 1,
-                'category_name': 'Name test',
+                'id': 2,
+                'category': "caps",
+                'category_name': 'caps',
                 'main_colour': 'white',
                 'second_colour': 'black',
                 'logo_colour': 'green',
@@ -99,7 +102,8 @@ class ProductSerializerTest(TestCase):
                 'inclusion_date': output["inclusion_date"],
                 'url_img': 'www.img_test.com',
                 'price': 0.0,
-                'current_stock': 0,
+                'product_available': True,
+                'current_stock': 8,
                 'description': 'Product test',
                 'size': 'small',
                 'sizing': 'male',
@@ -108,79 +112,34 @@ class ProductSerializerTest(TestCase):
             }
         )
 
-    def test_get_caps(self):
-        with self.subTest("Cap data object"):
-            output_cap = ProductSerializer().get_caps(self.cap).data
-            self.assertDictEqual(
-                output_cap,
-                {
-                    'category': 2,
-                    'main_colour': 'white',
-                    'second_colour': 'black',
-                    'logo_colour': 'green',
-                    'brand': 'Brand test',
-                    'inclusion_date': output_cap["inclusion_date"],
-                    'url_img': 'www.img_test.com',
-                    'price': 0.0,
-                    'initial_stock': 0,
-                    'current_stock': 0,
-                    'description': 'Product test'
-                }
-            )
-        with self.subTest("Other data object"):
-            output_cap = ProductSerializer().get_caps(self.tshirt)
-            self.assertIsNone(output_cap)
-
-    def test_get_tshirts(self):
-        with self.subTest("T-Shirt data object"):
-            output = ProductSerializer().get_tshirts(self.tshirt).data
-            self.assertDictEqual(
-                output,
-                {
-                    'category': 3,
-                    'main_colour': 'white',
-                    'second_colour': 'black',
-                    'brand': 'Brand test',
-                    'inclusion_date': output["inclusion_date"],
-                    'url_img': 'www.img_test.com',
-                    'price': 0.0,
-                    'initial_stock': 0,
-                    'current_stock': 0,
-                    'description': 'Product test',
-                    'size': 'small',
-                    'sizing': 'male',
-                    'fabric': 'cottom',
-                    'sleeve': True
-                }
-            )
-        with self.subTest("Other data object"):
-            output_cap = ProductSerializer().get_tshirts(self.cap)
-            self.assertIsNone(output_cap)
-
 
 class SimpleProductSerializerTest(TestCase):
     def test_serializer(self):
         cap = ProductFactory(
-            category=CategoryFactory(name="cap"),
+            category=CategoryFactory(category=CAPS),
             price=18.20,
         )
         output = SimpleProductSerializer(cap).data
         self.assertDictEqual(
             output,
             {
-                'id': 1,
-                'category_name': 'cap',
+                'id': 2,
+                'category_name': 'caps',
                 'description': 'Product test',
                 'price': 18.20,
+                'product_available': True,
+                'created': output['created'],
+                'updated': output['updated']
             }
         )
 
 
+@freeze_time("2023-12-01 00:00:00")
 class CartItemsSerializerTest(TestCase):
     def test_serializer(self):
         cart = CartFactory(id="f7b3a040-f486-44e8-a7b5-b23688397bd7")
         cap = ProductFactory(
-            category=CategoryFactory(name="cap"),
+            category=CategoryFactory(category=CAPS),
             price=20.40,
         )
         trolley = CartItemsFactory(
@@ -196,10 +155,13 @@ class CartItemsSerializerTest(TestCase):
                 'id': 1,
                 'cart': 'f7b3a040-f486-44e8-a7b5-b23688397bd7',
                 'product': {
-                    'id': 1,
-                    'category_name': 'cap',
+                    'id': 2,
+                    'category_name': 'caps',
                     'description': 'Product test',
                     'price': 20.4,
+                    'product_available': True,
+                    'created': "2023-12-01T00:00:00",
+                    'updated': "2023-12-01T00:00:00",
                 },
                 'quantity': 2,
                 'sub_total': 40.8,
@@ -213,7 +175,7 @@ class AddCartItemSerializerTest(TestCase):
             id='c167678d-702d-49fc-a84f-492d9bcbad87',
         )
         self.cap = ProductFactory(
-            category=CategoryFactory(name="cap"),
+            category=CategoryFactory(category=CAPS),
         )
         self.items = CartItemsFactory(
             cart=self.cart,
@@ -225,13 +187,13 @@ class AddCartItemSerializerTest(TestCase):
         output = AddCartItemSerializer(self.items).data
         self.assertDictEqual(
             output,
-            {'id': 1, 'product_id': '1', 'quantity': 2}
+            {'id': 1, 'product_id': '2', 'quantity': 2}
         )
 
     def test_validate_product_id(self):
         with self.subTest("Existing product"):
             output = AddCartItemSerializer().validate_product_id(self.cap.id)
-            self.assertEqual(output, 1)
+            self.assertEqual(output, 2)
 
         with self.subTest("Non-existing product"):
             with self.assertRaises(ValidationError):
@@ -241,18 +203,16 @@ class AddCartItemSerializerTest(TestCase):
 @freeze_time("2023-12-01 00:00:00")
 class CartSerializerTest(TestCase):
     def test_serializer(self):
-        self.maxDiff = None
         cart = CartFactory(
             id='c167678d-702d-49fc-a84f-492d9bcbad87',
-            created="2023-12-01",
             completed=False,
         )
         cap = ProductFactory(
-            category=CategoryFactory(name="cap"),
+            category=CategoryFactory(category=CAPS),
             price=20.40,
         )
         tshirt = ProductFactory(
-            category=CategoryFactory(name="tshirt"),
+            category=CategoryFactory(category=TSHIRTS),
             price=18.50,
         )
         CartItemsFactory(
@@ -270,12 +230,14 @@ class CartSerializerTest(TestCase):
         self.assertEqual(output['id'], 'c167678d-702d-49fc-a84f-492d9bcbad87')
         self.assertEqual(
             output['items'][0]['product'],
-                {
-                    'id': 1,
-                    'category_name': 'cap',
-                    'description': 'Product test',
-                    'price': 20.4
-                },
+            {
+                'id': 2,
+                'description': 'Product test',
+                'price': 20.4,
+                'product_available': True,
+                'created': "2023-12-01T00:00:00",
+                'updated': "2023-12-01T00:00:00",
+            },
         )
         self.assertEqual(output['items'][0]['quantity'], 2),
         self.assertEqual(output['items'][0]['sub_total'], 40.8),
