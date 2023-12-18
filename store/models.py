@@ -61,25 +61,33 @@ class Cart(models.Model):
     # in order to create another one.
     def save(self, *args, **kwargs):
         current_cart = Cart.objects.all().first()
-        if not current_cart or current_cart.completed:
+        if not current_cart or current_cart.completed or self.id == current_cart.id:
             return super(Cart, self).save(*args, **kwargs)
         raise ValidationError("One cart still in progress")
 
 
-class CartItems(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, blank=True, null=True, related_name='items')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True, related_name='cart_items')
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, blank=True, null=True, related_name='item')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True, related_name='cart_item')
     quantity = models.IntegerField(default=1)
 
     def __str__(self):
         return self.product.description
 
     def save(self, *args, **kwargs):
+        if self.cart.completed:
+            raise ValidationError("This cart is now closed, no more products can be added.")
         current_product = Product.objects.filter(id=self.product.id).first()
         if current_product.is_available:
-            return super(CartItems, self).save(*args, **kwargs)
+            if current_product.current_stock < self.quantity:
+                raise ValidationError("The requested quantity does not exist,"
+                                      f" there are {current_product.current_stock} of this product.")
+            current_product.current_stock -= self.quantity
+            super(Product, current_product).save(*args, **kwargs)
+            return super(CartItem, self).save(*args, **kwargs)
         else:
             raise ValidationError("Product not available")
+
 
 
 class Customer(models.Model):

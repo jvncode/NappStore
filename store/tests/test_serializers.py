@@ -3,9 +3,9 @@ from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
 from ..constants import CAPS, TSHIRTS
-from ..serializers import CategorySerializer, ProductSerializer, CartSerializer, TShirtSerializer, CartItemsSerializer, \
+from ..serializers import CategorySerializer, ProductSerializer, CartSerializer, TShirtSerializer, CartItemSerializer, \
     CapSerializer, SimpleProductSerializer, AddCartItemSerializer
-from .factories import CategoryFactory, ProductFactory, CartFactory, CartItemsFactory
+from .factories import CategoryFactory, ProductFactory, CartFactory, CartItemFactory
 
 
 class CategorySerializerTest(TestCase):
@@ -135,20 +135,20 @@ class SimpleProductSerializerTest(TestCase):
 
 
 @freeze_time("2023-12-01 00:00:00")
-class CartItemsSerializerTest(TestCase):
+class CartItemSerializerTest(TestCase):
     def test_serializer(self):
         cart = CartFactory(id="f7b3a040-f486-44e8-a7b5-b23688397bd7")
         cap = ProductFactory(
             category=CategoryFactory(category=CAPS),
             price=20.40,
         )
-        trolley = CartItemsFactory(
+        trolley = CartItemFactory(
             cart=cart,
             product=cap,
             quantity=2,
         )
 
-        output = CartItemsSerializer(trolley).data
+        output = CartItemSerializer(trolley).data
         self.assertDictEqual(
             output,
             {
@@ -177,7 +177,7 @@ class AddCartItemSerializerTest(TestCase):
         self.cap = ProductFactory(
             category=CategoryFactory(category=CAPS),
         )
-        self.items = CartItemsFactory(
+        self.items = CartItemFactory(
             cart=self.cart,
             product=self.cap,
             quantity=2,
@@ -215,12 +215,12 @@ class CartSerializerTest(TestCase):
             category=CategoryFactory(category=TSHIRTS),
             price=18.50,
         )
-        CartItemsFactory(
+        CartItemFactory(
             cart=cart,
             product=cap,
             quantity=2,
         )
-        CartItemsFactory(
+        CartItemFactory(
             cart=cart,
             product=tshirt,
             quantity=3,

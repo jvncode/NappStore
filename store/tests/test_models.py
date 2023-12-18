@@ -2,9 +2,9 @@ import datetime
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
-from .factories import CategoryFactory, ProductFactory, CartFactory, CustomerFactory, CartItemsFactory
+from .factories import CategoryFactory, ProductFactory, CartFactory, CustomerFactory, CartItemFactory
 from ..constants import WHITE, BLACK, RED, SIZE_XS, COTTOM, SIZING_MALE, CAPS, TSHIRTS
-from ..models import CartItems
+from ..models import CartItem
 
 
 class CategoryTest(TestCase):
@@ -165,7 +165,7 @@ class CartTest(TestCase):
             )
 
 
-class CartItemsTest(TestCase):
+class CartItemTest(TestCase):
     def test_add_product_on_stock(self):
         cart = CartFactory(
             id='c167678d-702d-49fc-a84f-492d9bcbad82',
@@ -173,17 +173,17 @@ class CartItemsTest(TestCase):
         cap = ProductFactory(
             category=CategoryFactory(category=CAPS),
         )
-        cart_items = CartItemsFactory(
+        cart_item = CartItemFactory(
             cart=cart,
             product=cap,
             quantity=2,
         )
 
-        self.assertEqual(CartItems.objects.count(), 1)
-        self.assertEqual(cart_items.cart.id, 'c167678d-702d-49fc-a84f-492d9bcbad82')
-        self.assertEqual(cart_items.product.category.category, "caps")
-        self.assertTrue(cart_items.product.is_available)
-        self.assertEqual(cart_items.quantity, 2)
+        self.assertEqual(CartItem.objects.count(), 1)
+        self.assertEqual(cart_item.cart.id, 'c167678d-702d-49fc-a84f-492d9bcbad82')
+        self.assertEqual(cart_item.product.category.category, "caps")
+        self.assertTrue(cart_item.product.is_available)
+        self.assertEqual(cart_item.quantity, 2)
 
     def test_add_product_out_of_stock(self):
         cart = CartFactory(
@@ -194,7 +194,7 @@ class CartItemsTest(TestCase):
             current_stock=0,
         )
         with self.assertRaises(ValidationError):
-            CartItemsFactory(
+            CartItemFactory(
                 cart=cart,
                 product=cap,
                 quantity=2,

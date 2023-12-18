@@ -2,7 +2,7 @@ import datetime
 import factory
 from factory.django import DjangoModelFactory
 
-from ..models import Category, Product, Cart, CartItems, Customer
+from ..models import Category, Product, Cart, CartItem, Customer
 from ..constants import COLOURS, SIZE, SIZING, FABRIC, CAPS
 
 
@@ -46,11 +46,11 @@ class CartFactory(DjangoModelFactory):
         model = Cart
 
 
-class CartItemsFactory(DjangoModelFactory):
+class CartItemFactory(DjangoModelFactory):
     cart = factory.SubFactory(CartFactory)
 
     class Meta:
-        model = CartItems
+        model = CartItem
 
 
 class CustomerFactory(DjangoModelFactory):

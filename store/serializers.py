@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .models import Category, Product, Cart, CartItems, Customer
+from .models import Category, Product, Cart, CartItem, Customer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -17,7 +17,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         exclude = ['initial_stock', 'created', 'updated']
 
-    def is_available(self, cart_item: CartItems):
+    def is_available(self, cart_item: CartItem):
         return cart_item.product.is_available
 
 class CapSerializer(ProductSerializer):
@@ -61,20 +61,20 @@ class SimpleProductSerializer(ProductSerializer):
         ]
 
 
-class CartItemsSerializer(serializers.ModelSerializer):
+class CartItemSerializer(serializers.ModelSerializer):
     product = SimpleProductSerializer(many=False)
     sub_total = serializers.SerializerMethodField(method_name="total")
 
 
     class Meta:
-        model = CartItems
+        model = CartItem
         fields = ["id", "cart", "product", "quantity", "sub_total"]
 
-    def total(self, cart_item: CartItems):
+    def total(self, cart_item: CartItem):
         return cart_item.quantity * cart_item.product.price
 
 
-class AddCartItemSerializer(CartItemsSerializer):
+class AddCartItemSerializer(CartItemSerializer):
     product_id = serializers.UUIDField()
 
     def validate_product_id(self, value):
@@ -90,7 +90,7 @@ class AddCartItemSerializer(CartItemsSerializer):
         product = Product.objects.filter(id=product_id)
         try:
             if product.is_available:
-                cart_item = CartItems.objects.get(
+                cart_item = CartItem.objects.get(
                     product_id=product_id,
                     cart_id=cart_id
                 )
@@ -101,7 +101,7 @@ class AddCartItemSerializer(CartItemsSerializer):
             else:
                 raise ValidationError("This product is out of stock")
         except:
-            self.instance = CartItems.objects.create(
+            self.instance = CartItem.objects.create(
                 cart_id=cart_id,
                 **self.validated_data
             )
@@ -112,13 +112,13 @@ class AddCartItemSerializer(CartItemsSerializer):
 
         return self.instance
 
-    class Meta(CartItemsSerializer.Meta):
+    class Meta(CartItemSerializer.Meta):
         fields = ["id", "product_id", "quantity"]
 
 
 class CartSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
-    items = CartItemsSerializer(many=True, read_only=True)
+    items = CartItemSerializer(many=True, read_only=True)
     total = serializers.SerializerMethodField(method_name='main_total')
 
     class Meta:

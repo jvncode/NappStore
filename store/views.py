@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.generics import RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView
 
-from .models import Product, Category, Cart, CartItems, Customer
-from .serializers import CategorySerializer, ProductSerializer, CartSerializer, CartItemsSerializer, \
+from .models import Product, Category, Cart, CartItem, Customer
+from .serializers import CategorySerializer, ProductSerializer, CartSerializer, CartItemSerializer, \
     AddCartItemSerializer, CustomerSerializer
 
 
@@ -36,15 +36,15 @@ class CartUpdate(RetrieveUpdateAPIView):
     serializer_class = CartSerializer
 
 
-class CartItemsViewSet(viewsets.ModelViewSet):
+class CartItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
-        return CartItems.objects.filter(cart_id=self.kwargs["cart_pk"])
+        return CartItem.objects.filter(cart_id=self.kwargs["cart_pk"])
 
     def get_serializer_class(self):
         if self.request.method == "POST":
             return AddCartItemSerializer
 
-        return CartItemsSerializer
+        return CartItemSerializer
 
     def get_serializer_context(self):
         return {"cart_id": self.kwargs["cart_pk"]}
