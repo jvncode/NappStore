@@ -10,21 +10,21 @@ from ..models import CartItem
 class CategoryTest(TestCase):
     def test_create_full_data(self):
         category = CategoryFactory(
-            category=TSHIRTS,
+            name=TSHIRTS,
             created=datetime.datetime.now()
         )
-        self.assertEqual(category.category, "tshirts")
+        self.assertEqual(category.name, "tshirts")
 
     def test_create_empty_data(self):
         category = CategoryFactory()
-        self.assertEqual(category.category, "caps")
+        self.assertEqual(category.name, "caps")
 
 
 class ProductTest(TestCase):
     def test_create_full_data(self):
         with self.subTest("New Cap"):
             cap = ProductFactory(
-                category=CategoryFactory(category="Cap"),
+                category=CategoryFactory(name="Cap"),
                 main_colour=WHITE,
                 second_colour=BLACK,
                 logo_colour=RED,
@@ -37,7 +37,7 @@ class ProductTest(TestCase):
                 description="Product test"
             )
 
-            self.assertEqual(cap.category.category, "Cap")
+            self.assertEqual(cap.category.name, "Cap")
             self.assertEqual(cap.main_colour, ('white'))
             self.assertEqual(cap.second_colour, ('black'))
             self.assertEqual(cap.logo_colour, ('red'))
@@ -50,7 +50,7 @@ class ProductTest(TestCase):
 
         with self.subTest("New T-Shirt"):
             tshirt = ProductFactory(
-                category=CategoryFactory(category="T-Shirt"),
+                category=CategoryFactory(name="T-Shirt"),
                 main_colour=WHITE,
                 second_colour=BLACK,
                 size=SIZE_XS,
@@ -66,7 +66,7 @@ class ProductTest(TestCase):
                 description="Product test"
             )
 
-            self.assertEqual(tshirt.category.category, "T-Shirt")
+            self.assertEqual(tshirt.category.name, "T-Shirt")
             self.assertEqual(tshirt.main_colour, ('white'))
             self.assertEqual(tshirt.second_colour, ('black'))
             self.assertEqual(tshirt.size, ('extra_small'))
@@ -83,12 +83,12 @@ class ProductTest(TestCase):
     def test_create_empty_data(self):
         with self.subTest("New Cap"):
             cap = ProductFactory(
-                category=CategoryFactory(category="Cap")
+                category=CategoryFactory(name="Cap")
             )
-            self.assertEqual(cap.category.category, "Cap")
+            self.assertEqual(cap.category.name, "Cap")
             self.assertEqual(cap.main_colour, ("white"))
             self.assertEqual(cap.second_colour, ("black"))
-            self.assertEqual(cap.logo_colour, ("green"))
+            self.assertEqual(cap.logo_colour, ("blue"))
             self.assertEqual(cap.brand, "Brand test")
             self.assertEqual(cap.url_img, "www.img_test.com")
             self.assertEqual(cap.price, 0)
@@ -98,9 +98,9 @@ class ProductTest(TestCase):
 
         with self.subTest("New T-Shirt"):
             tshirt = ProductFactory(
-                category=CategoryFactory(category="T-Shirt")
+                category=CategoryFactory(name="T-Shirt")
             )
-            self.assertEqual(tshirt.category.category, "T-Shirt")
+            self.assertEqual(tshirt.category.name, "T-Shirt")
             self.assertEqual(tshirt.main_colour, ("white"))
             self.assertEqual(tshirt.second_colour, ("black"))
             self.assertEqual(tshirt.size, ("small"))
@@ -117,7 +117,7 @@ class ProductTest(TestCase):
     def test_is_available(self):
         with self.subTest("In stock"):
             tshirt = ProductFactory(
-                category=CategoryFactory(category="T-Shirt"),
+                category=CategoryFactory(name="T-Shirt"),
                 current_stock=20,
             )
 
@@ -126,7 +126,7 @@ class ProductTest(TestCase):
 
         with self.subTest("Out of Stock"):
             tshirt = ProductFactory(
-                category=CategoryFactory(category="T-Shirt"),
+                category=CategoryFactory(name="T-Shirt"),
                 current_stock=0,
             )
             stock = tshirt.is_available
@@ -171,7 +171,7 @@ class CartItemTest(TestCase):
             id='c167678d-702d-49fc-a84f-492d9bcbad82',
         )
         cap = ProductFactory(
-            category=CategoryFactory(category=CAPS),
+            category=CategoryFactory(name=CAPS),
         )
         cart_item = CartItemFactory(
             cart=cart,
@@ -181,7 +181,7 @@ class CartItemTest(TestCase):
 
         self.assertEqual(CartItem.objects.count(), 1)
         self.assertEqual(cart_item.cart.id, 'c167678d-702d-49fc-a84f-492d9bcbad82')
-        self.assertEqual(cart_item.product.category.category, "caps")
+        self.assertEqual(cart_item.product.category.name, "caps")
         self.assertTrue(cart_item.product.is_available)
         self.assertEqual(cart_item.quantity, 2)
 
@@ -190,7 +190,7 @@ class CartItemTest(TestCase):
             id='c167678d-702d-49fc-a84f-492d9bcbad44',
         )
         cap = ProductFactory(
-            category=CategoryFactory(category=CAPS),
+            category=CategoryFactory(name=CAPS),
             current_stock=0,
         )
         with self.assertRaises(ValidationError):

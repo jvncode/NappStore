@@ -3,11 +3,11 @@ import factory
 from factory.django import DjangoModelFactory
 
 from ..models import Category, Product, Cart, CartItem, Customer
-from ..constants import COLOURS, SIZE, SIZING, FABRIC, CAPS
+from ..constants import CAPS, WHITE, BLACK, BLUE, SIZE_S, COTTOM, SIZING_MALE
 
 
 class CategoryFactory(DjangoModelFactory):
-    category = CAPS
+    name = CAPS
     created = datetime.datetime(
         day=18,
         month=5,
@@ -22,13 +22,13 @@ class CategoryFactory(DjangoModelFactory):
 
 class ProductFactory(DjangoModelFactory):
     category = factory.SubFactory(CategoryFactory)
-    main_colour = COLOURS[0][0]
-    second_colour = COLOURS[1][0]
-    logo_colour = COLOURS[3][0]
-    size = SIZE[1][0]
+    main_colour = WHITE
+    second_colour = BLACK
+    logo_colour = BLUE
+    size = SIZE_S
     brand = "Brand test"
-    fabric = FABRIC[0][0]
-    sizing = SIZING[0][0]
+    fabric = COTTOM
+    sizing = SIZING_MALE
     sleeve = True
     inclusion_date = datetime.datetime.now()
     url_img = "www.img_test.com"

@@ -3,7 +3,7 @@
         "model": "store.category",
         "pk": 1,
         "fields": {
-            "category": "cap",
+            "name": "cap",
             "created": "2021-01-24",
             "updated": "2021-01-24"
         }
@@ -12,7 +12,7 @@
         "model": "store.category",
         "pk": 2,
         "fields": {
-            "category": "tshirt",
+            "name": "tshirt",
             "created": "2021-01-24",
             "updated": "2021-01-24"
         }
@@ -21,8 +21,7 @@
         "model": "store.product",
         "pk": 1,
         "fields": {
-            "category_ptr_id": 1,
-            "category": "cap",
+            "category": 1,
             "main_colour": "black",
             "second_colour": "white",
             "logo_colour": "red",
@@ -39,8 +38,7 @@
         "model": "store.product",
         "pk": 2,
         "fields": {
-            "category_ptr_id": 1,
-            "category": "cap",
+            "category": 1,
             "main_colour": "red",
             "second_colour": "white",
             "logo_colour": "black",
@@ -57,8 +55,7 @@
         "model": "store.product",
         "pk": 3,
         "fields": {
-            "category_ptr_id": 1,
-            "category": "cap",
+            "category": 1,
             "main_colour": "blue",
             "second_colour": "white",
             "logo_colour": "black",
@@ -75,8 +72,7 @@
         "model": "store.product",
         "pk": 4,
         "fields": {
-            "category_ptr_id": 1,
-            "category": "cap",
+            "category": 1,
             "main_colour": "green",
             "second_colour": "white",
             "logo_colour": "white",
@@ -93,8 +89,7 @@
         "model": "store.product",
         "pk": 5,
         "fields": {
-            "category_ptr_id": 1,
-            "category": "cap",
+            "category": 1,
             "main_colour": "white",
             "second_colour": "black",
             "logo_colour": "white",
@@ -111,8 +106,7 @@
         "model": "store.product",
         "pk": 6,
         "fields": {
-            "category_ptr_id": 2,
-            "category": "tshirt",
+            "category": 2,
             "main_colour": "red",
             "second_colour": "black",
             "brand": "Nike",
@@ -132,8 +126,7 @@
         "model": "store.product",
         "pk": 7,
         "fields": {
-            "category_ptr_id": 2,
-            "category": "tshirt",
+            "category": 2,
             "main_colour": "black",
             "second_colour": "white",
             "brand": "Adidas",
@@ -153,8 +146,7 @@
         "model": "store.product",
         "pk": 8,
         "fields": {
-            "category_ptr_id": 2,
-            "category": "tshirt",
+            "category": 2,
             "main_colour": "blue",
             "second_colour": "black",
             "brand": "WET",
@@ -174,8 +166,7 @@
         "model": "store.product",
         "pk": 9,
         "fields": {
-            "category_ptr_id": 2,
-            "category": "tshirt",
+            "category": 2,
             "main_colour": "yellow",
             "second_colour": "white",
             "brand": "FD",
@@ -195,8 +186,7 @@
         "model": "store.product",
         "pk": 10,
         "fields": {
-            "category_ptr_id": 2,
-            "category": "tshirt",
+            "category": 2,
             "main_colour": "white",
             "second_colour": "red",
             "brand": "AAC",

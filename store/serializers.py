@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from django.db.models import Sum
 
 from .models import Category, Product, Cart, CartItem, Customer
 
@@ -11,14 +12,17 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category_name = serializers.StringRelatedField(source="category.category")
+    category_name = serializers.StringRelatedField(source="category.name")
     product_available = serializers.SerializerMethodField(method_name="is_available")
+
     class Meta:
         model = Product
-        exclude = ['initial_stock', 'created', 'updated']
+        exclude = ['initial_stock']
 
-    def is_available(self, cart_item: CartItem):
-        return cart_item.product.is_available
+    @staticmethod
+    def is_available(product: Product):
+        return product.is_available
+
 
 class CapSerializer(ProductSerializer):
     class Meta(ProductSerializer.Meta):
@@ -41,7 +45,7 @@ class TShirtSerializer(ProductSerializer):
 
 
 class SimpleProductSerializer(ProductSerializer):
-    category_name = serializers.StringRelatedField(source="category.category")
+    category_name = serializers.StringRelatedField(source="category.name")
 
     class Meta(ProductSerializer.Meta):
         exclude = [
@@ -64,7 +68,6 @@ class SimpleProductSerializer(ProductSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
     product = SimpleProductSerializer(many=False)
     sub_total = serializers.SerializerMethodField(method_name="total")
-
 
     class Meta:
         model = CartItem
@@ -118,17 +121,24 @@ class AddCartItemSerializer(CartItemSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
-    items = CartItemSerializer(many=True, read_only=True)
     total = serializers.SerializerMethodField(method_name='main_total')
+    items = serializers.SerializerMethodField(method_name='cart_items')
 
     class Meta:
         model = Cart
         fields = ["id", "items", "total", "created", "completed"]
 
-    def main_total(self, cart: Cart):
-        items = cart.items.all()
-        total = sum([item.quantity * item.product.price for item in items])
-        return total
+    def main_total(self, cart_item: CartItem):
+        total = CartItem.objects.filter(cart=cart_item.id).select_related('product').values_list(
+            'product__price').aggregate(
+            Sum('product__price'))
+        return total['product__price__sum']
+
+    def cart_items(self, cart_item: CartItem):
+        items = CartItem.objects.filter(cart=cart_item.id).select_related('product').values('product__id',
+                                                                                            'product__description',
+                                                                                            'product__price')
+        return items
 
 
 class CustomerSerializer(serializers.ModelSerializer):

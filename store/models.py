@@ -6,7 +6,7 @@ from .constants import COLOURS, SIZE, SIZING, FABRIC, CATEGORIES_CHOICES
 
 
 class Category(models.Model):
-    category = models.CharField(max_length=50, choices=CATEGORIES_CHOICES, blank=False, null=False)
+    name = models.CharField(max_length=50, choices=CATEGORIES_CHOICES, blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -15,10 +15,11 @@ class Category(models.Model):
         verbose_name_plural = "categories"
 
     def __str__(self):
-        return self.category
+        return self.name
 
 
-class Product(Category):
+class Product(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=False, blank=False, related_name='products')
     main_colour = models.CharField(max_length=50, choices=COLOURS, null=False, blank=False, verbose_name='Main colour')
     second_colour = models.CharField(max_length=50, choices=COLOURS, null=False, blank=False,
                                      verbose_name='Secondary colour')
@@ -83,7 +84,7 @@ class CartItem(models.Model):
                 raise ValidationError("The requested quantity does not exist,"
                                       f" there are {current_product.current_stock} of this product.")
             current_product.current_stock -= self.quantity
-            super(Product, current_product).save(*args, **kwargs)
+            #super(Product, current_product).save(*args, **kwargs)
             return super(CartItem, self).save(*args, **kwargs)
         else:
             raise ValidationError("Product not available")
